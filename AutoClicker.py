@@ -79,16 +79,21 @@ class AutoClicker(QMainWindow):
         container.setLayout(layout)
         self.clicker_widget = container
 
+        self.click_amount = 10
+
         def on_click():
 
-            for _ in range(100):
+            for _ in range(self.click_amount):
                 pyautogui.click(self.click_position.x(), self.click_position.y())
 
         def set_click_speed(speed: int):
 
             pyautogui.PAUSE = 1 / speed
 
-        click_speed_label = QLabel("/cps")
+        def set_click_amount():
+            self.click_amount = int(click_amount_box.text())
+
+        click_speed_label = QLabel("CPS")
 
         validator = QIntValidator(0, 999)
 
@@ -104,9 +109,20 @@ class AutoClicker(QMainWindow):
         click_button = QPushButton("click")
         click_button.clicked.connect(on_click)
 
-        layout.addWidget(speed_value_box, 0, 0)
-        layout.addWidget(click_speed_label, 0, 1)
-        layout.addWidget(click_button, 1, 0, 1, 2)
+        click_ammount_label = QLabel("Clicks")
+
+        click_amount_box = QLineEdit()
+        click_amount_box.setText(str(self.click_amount))
+        click_amount_box.setFixedWidth(45)
+        click_amount_box.setMaxLength(3)
+        click_amount_box.setValidator(validator)
+        click_amount_box.textChanged.connect(set_click_amount)
+
+        layout.addWidget(click_amount_box, 0, 0)
+        layout.addWidget(click_ammount_label, 0, 1)
+        layout.addWidget(speed_value_box, 1, 0)
+        layout.addWidget(click_speed_label, 1, 1)
+        layout.addWidget(click_button, 2, 0, 1, 2)
 
     def place_widgets(self):
 
