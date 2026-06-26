@@ -1,7 +1,7 @@
 import pyautogui
 import sys
-from PySide6.QtCore import QSize, Qt
-from PySide6.QtGui import QMouseEvent
+from PySide6.QtCore import QSize, Qt, QPoint
+from PySide6.QtGui import QMouseEvent, QIntValidator
 from PySide6.QtWidgets import (
     QMainWindow,
     QLabel,
@@ -12,6 +12,7 @@ from PySide6.QtWidgets import (
     QLineEdit,
 )
 
+
 from modules.click_util import ClickWatcher
 
 
@@ -20,41 +21,56 @@ class AutoClicker(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
 
-        self.init_coord_widget()
+        self.init_coordinates_widget()
         self.place_widgets()
 
-    def init_coord_widget(self):
+    def init_coordinates_widget(self):
         layout = QGridLayout()
         container = QWidget()
         container.setLayout(layout)
-        self.set_coords_widget = container
 
-        self.watcher = ClickWatcher()
+        self.coordinates_widget = container
+
+        watcher = ClickWatcher()
+
+        self.click_position = QPoint()
 
         def on_click():
-            self.watcher.wait_for_click()
+            watcher.wait_for_click()
 
-            x_cord_box.setText(str(self.watcher.x))
-            y_cord_box.setText(str(self.watcher.y))
+            x_value_box.setText(str(watcher.x))
+            y_value_box.setText(str(watcher.y))
 
         x_label = QLabel("x:")
         y_label = QLabel("y:")
 
-        x_cord_box = QLineEdit()
-        x_cord_box.setText(str(self.watcher.x))
-        x_cord_box.setFixedWidth(37)
+        validator = QIntValidator(-9999, 9999)
 
-        y_cord_box = QLineEdit()
-        y_cord_box.setText(str(self.watcher.y))
-        y_cord_box.setFixedWidth(37)
+        x_value_box = QLineEdit()
+        x_value_box.setText(str(watcher.x))
+        x_value_box.setFixedWidth(45)
+        x_value_box.setMaxLength(5)
+        x_value_box.setValidator(validator)
+        x_value_box.textChanged.connect(
+            lambda: self.click_position.setX(int(x_value_box.text()))
+        )
+
+        y_value_box = QLineEdit()
+        y_value_box.setText(str(watcher.y))
+        y_value_box.setFixedWidth(45)
+        y_value_box.setMaxLength(5)
+        y_value_box.setValidator(validator)
+        y_value_box.textChanged.connect(
+            lambda: self.click_position.setY(int(y_value_box.text()))
+        )
 
         button = QPushButton("Set Position")
         button.clicked.connect(on_click)
 
         layout.addWidget(x_label, 0, 0)
-        layout.addWidget(x_cord_box, 0, 1)
+        layout.addWidget(x_value_box, 0, 1)
         layout.addWidget(y_label, 0, 2)
-        layout.addWidget(y_cord_box, 0, 3)
+        layout.addWidget(y_value_box, 0, 3)
         layout.addWidget(button, 1, 0, 1, 4)
 
     def place_widgets(self):
@@ -64,7 +80,7 @@ class AutoClicker(QMainWindow):
         container.setLayout(layout)
         self.setCentralWidget(container)
 
-        layout.addWidget(self.set_coords_widget, 0, 0, Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(self.coordinates_widget, 0, 0, Qt.AlignmentFlag.AlignCenter)
 
 
 def main():
