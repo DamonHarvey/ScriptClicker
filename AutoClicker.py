@@ -11,7 +11,7 @@ from PySide6.QtWidgets import (
     QGridLayout,
     QLineEdit,
 )
-
+import keyboard
 
 from modules.click_util import ClickWatcher
 
@@ -29,6 +29,7 @@ class AutoClicker(QMainWindow):
     def init_window(self):
         self.setWindowTitle("Auto Clicker")
         self.setWindowIcon(QIcon("icon.ico"))
+        self.setFixedSize(QSize())
 
     def init_coordinates_widget(self):
         layout = QGridLayout()
@@ -96,6 +97,10 @@ class AutoClicker(QMainWindow):
         def on_click():
 
             for _ in range(self.click_amount):
+
+                if keyboard.is_pressed("esc"):
+                    return
+
                 pyautogui.click(self.click_position.x(), self.click_position.y())
 
         def set_click_speed(speed: int):
@@ -118,7 +123,7 @@ class AutoClicker(QMainWindow):
             lambda: set_click_speed(int(speed_value_box.text()))
         )
 
-        click_button = QPushButton("click")
+        click_button = QPushButton("Click")
         click_button.clicked.connect(on_click)
 
         click_ammount_label = QLabel("Clicks")
