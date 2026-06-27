@@ -1,7 +1,7 @@
 import pyautogui
 import sys
 from PySide6.QtCore import QSize, Qt, QPoint
-from PySide6.QtGui import QMouseEvent, QIntValidator
+from PySide6.QtGui import QMouseEvent, QIntValidator, QIcon
 from PySide6.QtWidgets import (
     QMainWindow,
     QLabel,
@@ -21,9 +21,14 @@ class AutoClicker(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
 
+        self.init_window()
         self.init_coordinates_widget()
         self.init_clicker_widget()
         self.place_widgets()
+
+    def init_window(self):
+        self.setWindowTitle("Auto Clicker")
+        self.setWindowIcon(QIcon("icon.ico"))
 
     def init_coordinates_widget(self):
         layout = QGridLayout()
@@ -40,6 +45,12 @@ class AutoClicker(QMainWindow):
 
             x_value_box.setText(str(watcher.x))
             y_value_box.setText(str(watcher.y))
+
+        widget_label = QLabel("Click Position")
+        a = widget_label.font()
+        a.setUnderline(True)
+        a.setBold(True)
+        widget_label.setFont(a)
 
         x_label = QLabel("x:")
         y_label = QLabel("y:")
@@ -67,11 +78,12 @@ class AutoClicker(QMainWindow):
         button = QPushButton("Set Position")
         button.clicked.connect(on_click)
 
-        layout.addWidget(x_label, 0, 0)
-        layout.addWidget(x_value_box, 0, 1)
-        layout.addWidget(y_label, 0, 2)
-        layout.addWidget(y_value_box, 0, 3)
-        layout.addWidget(button, 1, 0, 1, 4)
+        layout.addWidget(widget_label, 0, 0, 1, 4, Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(x_label, 1, 0)
+        layout.addWidget(x_value_box, 1, 1)
+        layout.addWidget(y_label, 1, 2)
+        layout.addWidget(y_value_box, 1, 3)
+        layout.addWidget(button, 2, 0, 1, 4)
 
     def init_clicker_widget(self):
         layout = QGridLayout()
@@ -95,12 +107,12 @@ class AutoClicker(QMainWindow):
 
         click_speed_label = QLabel("CPS")
 
-        validator = QIntValidator(0, 999)
+        validator = QIntValidator(0, 9999)
 
         speed_value_box = QLineEdit()
         speed_value_box.setText("10")
-        speed_value_box.setFixedWidth(45)
-        speed_value_box.setMaxLength(3)
+        speed_value_box.setFixedWidth(37)
+        speed_value_box.setMaxLength(4)
         speed_value_box.setValidator(validator)
         speed_value_box.textChanged.connect(
             lambda: set_click_speed(int(speed_value_box.text()))
@@ -113,8 +125,8 @@ class AutoClicker(QMainWindow):
 
         click_amount_box = QLineEdit()
         click_amount_box.setText(str(self.click_amount))
-        click_amount_box.setFixedWidth(45)
-        click_amount_box.setMaxLength(3)
+        click_amount_box.setFixedWidth(37)
+        click_amount_box.setMaxLength(4)
         click_amount_box.setValidator(validator)
         click_amount_box.textChanged.connect(set_click_amount)
 
