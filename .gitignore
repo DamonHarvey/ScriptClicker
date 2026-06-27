@@ -2,5 +2,6 @@
 __pycache__
 AutoClicker.spec
 to_exe.txt
-build
-dist
+AutoClicker.exe
+icons.qrc
+pysidedeploy.spec
