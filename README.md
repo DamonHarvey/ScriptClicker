@@ -1,4 +1,4 @@
-# AutoClicker
+# ScriptClicker
 Auto clicker ~~with scripting functionality~~.
 
 # Requirements
