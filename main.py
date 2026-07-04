@@ -17,7 +17,7 @@ import keyboard
 from modules.click_util import ClickWatcher
 
 
-class AutoClicker(QMainWindow):
+class ClickerApp(QMainWindow):
 
     def __init__(self) -> None:
         super().__init__()
@@ -28,7 +28,7 @@ class AutoClicker(QMainWindow):
         self.place_widgets()
 
     def init_window(self):
-        self.setWindowTitle("Auto Clicker")
+        self.setWindowTitle("Script Clicker")
         self.setWindowIcon(QIcon(":/app_icon.ico"))
         self.setFixedSize(QSize(self.baseSize()))
 
@@ -54,28 +54,39 @@ class AutoClicker(QMainWindow):
         a.setBold(True)
         widget_label.setFont(a)
 
-        x_label = QLabel("x:")
-        y_label = QLabel("y:")
-
         validator = QIntValidator(-9999, 9999)
+
+        def set_x():
+
+            if x_value_box.text() == "":
+                x_value_box.setText("0")
+
+            self.click_position.setX(int(x_value_box.text()))
+
+        x_label = QLabel("x:")
 
         x_value_box = QLineEdit()
         x_value_box.setText(str(watcher.x))
         x_value_box.setFixedWidth(45)
         x_value_box.setMaxLength(5)
         x_value_box.setValidator(validator)
-        x_value_box.textChanged.connect(
-            lambda: self.click_position.setX(int(x_value_box.text()))
-        )
+        x_value_box.textChanged.connect(set_x)
+
+        def set_y():
+
+            if y_value_box.text() == "":
+                y_value_box.setText("0")
+
+            self.click_position.setY(int(y_value_box.text()))
+
+        y_label = QLabel("y:")
 
         y_value_box = QLineEdit()
         y_value_box.setText(str(watcher.y))
         y_value_box.setFixedWidth(45)
         y_value_box.setMaxLength(5)
         y_value_box.setValidator(validator)
-        y_value_box.textChanged.connect(
-            lambda: self.click_position.setY(int(y_value_box.text()))
-        )
+        y_value_box.textChanged.connect(set_y)
 
         button = QPushButton("Set Position")
         button.clicked.connect(on_click)
@@ -104,11 +115,18 @@ class AutoClicker(QMainWindow):
 
                 pyautogui.click(self.click_position.x(), self.click_position.y())
 
-        def set_click_speed(speed: int):
+        def set_click_speed():
 
-            pyautogui.PAUSE = 1 / speed
+            if speed_value_box.text() in ["0", ""]:
+                speed_value_box.setText("1")
+
+            pyautogui.PAUSE = 1 / int(speed_value_box.text())
 
         def set_click_amount():
+
+            if click_amount_box.text() == "":
+                click_amount_box.setText("0")
+
             self.click_amount = int(click_amount_box.text())
 
         click_speed_label = QLabel("CPS")
@@ -120,9 +138,7 @@ class AutoClicker(QMainWindow):
         speed_value_box.setFixedWidth(37)
         speed_value_box.setMaxLength(4)
         speed_value_box.setValidator(validator)
-        speed_value_box.textChanged.connect(
-            lambda: set_click_speed(int(speed_value_box.text()))
-        )
+        speed_value_box.textChanged.connect(set_click_speed)
 
         click_button = QPushButton("Click")
         click_button.clicked.connect(on_click)
@@ -156,7 +172,7 @@ class AutoClicker(QMainWindow):
 def main():
     app = QApplication(sys.argv)
 
-    window = AutoClicker()
+    window = ClickerApp()
     window.show()
 
     sys.exit(app.exec())
