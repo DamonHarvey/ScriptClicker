@@ -93,9 +93,15 @@ class ClickWidget(QWidget):
 
 class testingWindow(QMainWindow):
 
+    def do_script(self):
+        for line in self.lines:
+            line.do_action()
+
     def __init__(self):
 
         super().__init__()
+
+        self.lines: list[ClickWidget] = []
 
         self.init_widgets()
 
@@ -108,7 +114,12 @@ class testingWindow(QMainWindow):
 
         for i in range(1, 8):
             w = ClickWidget(i)
+            self.lines.append(w)
             layout.addWidget(w)
+
+        button = QPushButton("do")
+        layout.addWidget(button)
+        button.clicked.connect(self.do_script)
 
 
 def main():
